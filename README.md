@@ -1,69 +1,98 @@
-# React + TypeScript + Vite
+<h1>🛠️ Solana Storacha SDK — Local Development &amp; Testing</h1>
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+<p>
+This guide explains how to set up and use the <strong>Solana Storacha SDK</strong> locally for development and testing with the provided React example app —
+without publishing the SDK to npm.
+</p>
 
-Currently, two official plugins are available:
+<hr />
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+<h2>📂 Project Structure</h2>
+<pre><code>.
+├── solana-storacha-sdk/   # The SDK package
+└── /    # Example React app using the SDK
+</code></pre>
 
-## Expanding the ESLint configuration
+<hr />
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+<h2>🔗 1. Linking SDK with the React app</h2>
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+<h3>Option A — <strong>pnpm link</strong> (recommended)</h3>
+<p><strong>In SDK folder:</strong></p>
+<pre><code>cd storacha-solana-sdk
+pnpm install
+pnpm build
+pnpm link --global
+</code></pre>
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+<p><strong>In example app folder:</strong></p>
+<pre><code>pnpm install
+pnpm link ./storacha-solana-sdk
+</code></pre>
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+<p><em>Now changes to the SDK will be reflected in the app after rebuilding it.</em></p>
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+<h3>Option B — Local file path dependency</h3>
+<p>In <code>solana-sdk-example/package.json</code>:</p>
+<pre><code>"dependencies": {
+  "storacha-solana-sdk": "file:./solana-storacha-sdk"
+}
+</code></pre>
+<p>Then:</p>
+<pre><code>pnpm install
+</code></pre>
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+<hr />
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+<h2>🖥️ 2. Running Example React App</h2>
+<p>From the example app folder:</p>
+<pre><code>pnpm dev
+</code></pre>
+<p>Open your browser at <a href="http://localhost:5173" target="_blank">http://localhost:5173</a> (Vite default).</p>
+
+<hr />
+
+<h2>🧩 3. Importing and Using the SDK</h2>
+<p>Example in <code>src/App.tsx</code>:</p>
+<pre><code>import { Client } from "solana-storacha-sdk";
+
+const client = new Client({
+  rpcUrl: "https://api.testnet.solana.com",
+  serverUrl: "https://storacha-solana-sdk-bshc.onrender.com"
+});
+
+const tx = await client.createDeposit({
+  payer: wallet.publicKey!,
+  cid: "your-file-cid",
+  size: 1234,
+  durationDays: 30,
+  depositAmount: 0.1
+});
+</code></pre>
+
+<hr />
+
+<h2>🛠️ 4. TypeScript Support</h2>
+<p>If you see:</p>
+<pre><code>Could not find a declaration file for module 'solana-storacha-sdk'
+</code></pre>
+<p>Create a file in your example project:</p>
+<pre><code>src/index.d.ts
+</code></pre>
+<p>With content:</p>
+<pre><code>declare module "solana-storacha-sdk";
+</code></pre>
+
+<hr />
+
+<h2>📌 Notes</h2>
+<ul>
+  <li>Restart dev server after linking.</li>
+  <li>If SDK updates, rebuild it (<code>pnpm build</code>) before testing in the app.</li>
+  <li>For full error logs when sending transactions, catch <code>SendTransactionError</code> and check <code>error.logs</code>.</li>
+</ul>
+
+<hr />
+
+<h2>✅ Done</h2>
+<p>You can now develop your SDK and app side-by-side without publishing to npm!</p>
