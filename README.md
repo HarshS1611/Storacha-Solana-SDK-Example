@@ -9,7 +9,7 @@ without publishing the SDK to npm.
 
 <h2>📂 Project Structure</h2>
 <pre><code>.
-├── solana-storacha-sdk/   # The SDK package
+├── sdk/   # The SDK package
 └── /    # Example React app using the SDK
 </code></pre>
 
@@ -19,7 +19,7 @@ without publishing the SDK to npm.
 
 <h3>Option A — <strong>pnpm link</strong> (recommended)</h3>
 <p><strong>In SDK folder:</strong></p>
-<pre><code>cd storacha-solana-sdk
+<pre><code>cd sdk
 pnpm install
 pnpm build
 pnpm link --global
@@ -27,15 +27,15 @@ pnpm link --global
 
 <p><strong>In example app folder:</strong></p>
 <pre><code>pnpm install
-pnpm link ./storacha-solana-sdk
+pnpm link ./sdk
 </code></pre>
 
 <p><em>Now changes to the SDK will be reflected in the app after rebuilding it.</em></p>
 
 <h3>Option B — Local file path dependency</h3>
-<p>In <code>solana-sdk-example/package.json</code>:</p>
+<p>In <code>./package.json</code>:</p>
 <pre><code>"dependencies": {
-  "storacha-solana-sdk": "file:./solana-storacha-sdk"
+  "sdk": "file:./sdk"
 }
 </code></pre>
 <p>Then:</p>
@@ -54,19 +54,16 @@ pnpm link ./storacha-solana-sdk
 
 <h2>🧩 3. Importing and Using the SDK</h2>
 <p>Example in <code>src/App.tsx</code>:</p>
-<pre><code>import { Client } from "solana-storacha-sdk";
+<pre><code>import { Client } from "sdk";
 
 const client = new Client({
-  rpcUrl: "https://api.testnet.solana.com",
-  serverUrl: "https://storacha-solana-sdk-bshc.onrender.com"
+  enivironemt: "testnet"
 });
 
 const tx = await client.createDeposit({
   payer: wallet.publicKey!,
-  cid: "your-file-cid",
-  size: 1234,
-  durationDays: 30,
-  depositAmount: 0.1
+  file,
+  durationDays: 7,
 });
 </code></pre>
 
@@ -74,13 +71,13 @@ const tx = await client.createDeposit({
 
 <h2>🛠️ 4. TypeScript Support</h2>
 <p>If you see:</p>
-<pre><code>Could not find a declaration file for module 'solana-storacha-sdk'
+<pre><code>Could not find a declaration file for module 'sdk'
 </code></pre>
 <p>Create a file in your example project:</p>
 <pre><code>src/index.d.ts
 </code></pre>
 <p>With content:</p>
-<pre><code>declare module "solana-storacha-sdk";
+<pre><code>declare module "sdk";
 </code></pre>
 
 <hr />
