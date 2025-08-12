@@ -4,16 +4,23 @@ import { useWallet, WalletProvider } from "@solana/wallet-adapter-react";
 import { WalletModalProvider, WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { PhantomWalletAdapter } from "@solana/wallet-adapter-wallets";
 
-import { Client } from "solana-storacha-sdk";
+import { Client } from "sdk";
 
 export default function App() {
   const wallet = useWallet();
+  
+  const [file, setFile] = useState<File | null>(null);
   const [status, setStatus] = useState<string>("");
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      setFile(event.target.files[0]);
+    }
+  };
 
   // Configure client with defaults or override server URLs here
   const client = new Client({
-    rpcUrl: "https://api.testnet.solana.com",
-    serverUrl: "https://storacha-solana-sdk-bshc.onrender.com",
+    environment: "testnet" // or "mainnet-beta" or "devnet"
   });
 
   const handleDeposit = async () => {
@@ -22,24 +29,25 @@ export default function App() {
       console.warn("Wallet not connected");
       return;
     }
+    if (!file) {
+      setStatus("❌ Please select a file to deposit.");
+      console.warn("No file selected");
+      return;
+    }
 
     try {
       setStatus("⏳ Creating deposit transaction...");
       console.log("Starting deposit process with params:", {
         payer: wallet.publicKey.toBase58(),
-        cid: "baqeq23e23qwqdf5l5lab3232asqa1527gq1vz5c6uv3qc6a3",
-        size: 1234,
-        durationDays: 30,
-        depositAmount: 0.3,
+        file,
+        durationDays: 7,
       });
 
       // 1️⃣ Create deposit transaction
       const tx = await client.createDeposit({
         payer: wallet.publicKey,
-        cid: "baqeq23e23qwqdf5l5lab3232asqa1527gq1vz5c6uv3qc6a3",
-        size: 1234,
-        durationDays: 30,
-        depositAmount: 0.3,
+        file,
+        durationDays: 7,
       });
       console.log("📄 Transaction created:", tx);
 
@@ -73,6 +81,8 @@ export default function App() {
     <div style={{ maxWidth: 600, margin: "2em auto", textAlign: "center" }}>
       <WalletMultiButton />
       <div style={{ marginTop: 20 }}>
+      <input type="file" onChange={handleFileChange} />
+
         <button onClick={handleDeposit} disabled={!wallet.connected}>
           Submit Deposit
         </button>

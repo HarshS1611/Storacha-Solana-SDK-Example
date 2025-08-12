@@ -1,5 +1,5 @@
 {
-  "name": "storacha-sol-sdk",
+  "name": "sdk",
   "version": "0.0.0",
   "main": "./dist/index.node.js",
   "bin": {

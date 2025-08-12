@@ -78,10 +78,8 @@ export interface OnChainConfig {
 export interface OnChainDeposit {
   /** public key of the depositor */
   depositor: Address;
-  /** CID for the content paid for */
-  cid: CID;
-  /** size of the content (bytes) */
-  size: number;
+  /** file object containing metadata about the upload */
+  file: File;
   /** storage duration (days) */
   duration: number;
   /** amount deposited in lamports */
